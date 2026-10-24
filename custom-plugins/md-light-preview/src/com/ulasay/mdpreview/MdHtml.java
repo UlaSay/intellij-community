@@ -17,8 +17,9 @@ import java.awt.Font;
  * Shared markdown rendering: parser to HTML, and a Swing HTML pane setup.
  */
 final class MdHtml {
-  private static final JBColor CODE_BACKGROUND = new JBColor(0xF6F8FA, 0x2B2D30);
+  private static final JBColor CODE_BACKGROUND = new JBColor(0xECF0F4, 0x1E2228);
   private static final JBColor BORDER_COLOR = new JBColor(0xD0D7DE, 0x444C56);
+  private static final JBColor CODE_ACCENT = new JBColor(0x00838F, 0x4DD0E1);
   private static final JBColor LINK_COLOR = new JBColor(0x0969DA, 0x58A6FF);
 
   private MdHtml() {
@@ -59,7 +60,11 @@ final class MdHtml {
     styleSheet.addRule("code {font-family: " + mono + "; background: "
                        + toHex(CODE_BACKGROUND) + "; padding: 1 3 1 3;}");
     styleSheet.addRule("pre {font-family: " + mono + "; background: " + toHex(CODE_BACKGROUND)
-                       + "; border: 1px solid " + toHex(BORDER_COLOR) + "; margin: 12 0 12 0; padding: 12;}");
+                       + "; border-left: 3px solid " + toHex(CODE_ACCENT)
+                       + "; border-top: 1px solid " + toHex(BORDER_COLOR)
+                       + "; border-right: 1px solid " + toHex(BORDER_COLOR)
+                       + "; border-bottom: 1px solid " + toHex(BORDER_COLOR)
+                       + "; margin: 12 0 12 0; padding: 12;}");
     styleSheet.addRule("blockquote {color: " + toHex(JBColor.GRAY) + "; margin: 10 0 10 10;"
                        + " border-left: 3px solid " + toHex(BORDER_COLOR) + "; padding-left: 14;}");
     styleSheet.addRule("a {color: " + toHex(LINK_COLOR) + ";}");
