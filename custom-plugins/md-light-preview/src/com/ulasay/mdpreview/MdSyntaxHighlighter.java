@@ -1,5 +1,8 @@
 package com.ulasay.mdpreview;
 
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.ui.JBColor;
 
 import java.util.Locale;
@@ -139,36 +142,50 @@ final class MdSyntaxHighlighter {
 
   private static String colorOf(Matcher matcher, String token, Set<String> keywords, boolean sql) {
     if (group(matcher, "comment") != null) {
-      return hex(COMMENT);
+      return editorHex(DefaultLanguageHighlighterColors.LINE_COMMENT, COMMENT);
     }
     if (group(matcher, "string") != null) {
-      return hex(STRING);
+      return editorHex(DefaultLanguageHighlighterColors.STRING, STRING);
     }
     if (group(matcher, "number") != null) {
-      return hex(NUMBER);
+      return editorHex(DefaultLanguageHighlighterColors.NUMBER, NUMBER);
     }
     if (group(matcher, "annotation") != null) {
-      return hex(ANNOTATION);
+      return editorHex(DefaultLanguageHighlighterColors.METADATA, ANNOTATION);
     }
     if (group(matcher, "tag") != null) {
-      return hex(TAG);
+      return editorHex(DefaultLanguageHighlighterColors.MARKUP_TAG, TAG);
     }
     if (group(matcher, "method") != null) {
-      return hex(METHOD);
+      return editorHex(DefaultLanguageHighlighterColors.FUNCTION_DECLARATION, METHOD);
     }
     if (group(matcher, "word") != null && keywords != null) {
       String word = sql ? token.toLowerCase(Locale.ROOT) : token;
       if (keywords.contains(word)) {
-        return hex(KEYWORD);
+        return editorHex(DefaultLanguageHighlighterColors.KEYWORD, KEYWORD);
       }
       if (!sql && token.length() > 1 && token.equals(token.toUpperCase(Locale.ROOT))) {
-        return hex(CONSTANT);
+        return editorHex(DefaultLanguageHighlighterColors.CONSTANT, CONSTANT);
       }
       if (!sql && Character.isUpperCase(token.charAt(0))) {
-        return hex(TYPE);
+        return editorHex(DefaultLanguageHighlighterColors.CLASS_NAME, TYPE);
       }
     }
     return null;
+  }
+
+  // The IDE's own editor palette, so the preview matches the active theme. Falls back when no scheme is around.
+  private static String editorHex(TextAttributesKey key, JBColor fallback) {
+    try {
+      var attributes = EditorColorsManager.getInstance().getGlobalScheme().getAttributes(key);
+      java.awt.Color foreground = attributes == null ? null : attributes.getForegroundColor();
+      if (foreground != null) {
+        return String.format("#%06X", 0xFFFFFF & foreground.getRGB());
+      }
+    }
+    catch (Throwable ignored) {
+    }
+    return hex(fallback);
   }
 
   // matcher.group(name) throws for a group the pattern does not define, it does not return null.
