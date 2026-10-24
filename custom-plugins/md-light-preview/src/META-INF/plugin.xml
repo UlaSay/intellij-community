@@ -1,0 +1,18 @@
+<idea-plugin>
+  <id>com.ulasay.md-light-preview</id>
+  <name>Markdown Light Preview</name>
+  <vendor>UlaSay</vendor>
+  <description>Lightweight markdown preview based on the Swing HTML engine. No JCEF, no browser.</description>
+  <depends>com.intellij.modules.platform</depends>
+  <idea-version since-build="271"/>
+  <actions>
+    <action id="UlasayMdLightPreview"
+            class="com.ulasay.mdpreview.MdPreviewAction"
+            text="Light Markdown Preview"
+            description="Render the current markdown file with the lightweight Swing view">
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="ViewMenu" anchor="last"/>
+      <keyboard-shortcut keymap="$default" first-keystroke="alt shift P"/>
+    </action>
+  </actions>
+</idea-plugin>
