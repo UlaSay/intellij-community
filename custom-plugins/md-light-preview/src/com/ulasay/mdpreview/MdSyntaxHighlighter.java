@@ -18,6 +18,9 @@ final class MdSyntaxHighlighter {
   private static final JBColor NUMBER = new JBColor(0x0550AE, 0x79C0FF);
   private static final JBColor ANNOTATION = new JBColor(0x8250DF, 0xD2A8FF);
   private static final JBColor TAG = new JBColor(0x116329, 0x7EE787);
+  private static final JBColor TYPE = new JBColor(0x953800, 0xFFA657);
+  private static final JBColor METHOD = new JBColor(0x6639BA, 0xD2A8FF);
+  private static final JBColor CONSTANT = new JBColor(0x0550AE, 0x79C0FF);
 
   private static final Set<String> CURLY_KEYWORDS = Set.of(
     "abstract", "as", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
@@ -44,26 +47,28 @@ final class MdSyntaxHighlighter {
 
   private static final Pattern CURLY = Pattern.compile(
     "(?<comment>/\\*[\\s\\S]*?\\*/|//[^\\n]*)"
-    + "|(?<string>" + Q + "[^\\n&]*?" + Q + "|'(?:[^'\\\\\\n]|\\\\.)*'|`[^\\n]*?`)"
+    + "|(?<string>" + Q + "(?:(?!" + Q + ")[^\\n])*" + Q + "|'(?:[^'\\\\\\n]|\\\\.)*'|`[^\\n]*?`)"
     + "|(?<annotation>@[A-Za-z_]\\w*)"
     + "|(?<number>\\b\\d[\\d_]*(?:\\.\\d+)?[fFlLdD]?\\b|\\b0[xX][0-9A-Fa-f_]+\\b)"
+    + "|(?<method>[A-Za-z_]\\w*(?=\\())"
     + "|(?<word>[A-Za-z_]\\w*)");
 
   private static final Pattern PY = Pattern.compile(
     "(?<comment>#[^\\n]*)"
-    + "|(?<string>" + Q + "[^\\n&]*?" + Q + "|'(?:[^'\\\\\\n]|\\\\.)*')"
+    + "|(?<string>" + Q + "(?:(?!" + Q + ")[^\\n])*" + Q + "|'(?:[^'\\\\\\n]|\\\\.)*')"
     + "|(?<number>\\b\\d[\\d_]*(?:\\.\\d+)?\\b)"
+    + "|(?<method>[A-Za-z_]\\w*(?=\\())"
     + "|(?<word>[A-Za-z_]\\w*)");
 
   private static final Pattern HASH = Pattern.compile(
     "(?<comment>#[^\\n]*)"
-    + "|(?<string>" + Q + "[^\\n&]*?" + Q + "|'(?:[^'\\\\\\n]|\\\\.)*')"
+    + "|(?<string>" + Q + "(?:(?!" + Q + ")[^\\n])*" + Q + "|'(?:[^'\\\\\\n]|\\\\.)*')"
     + "|(?<number>\\b\\d[\\d_]*(?:\\.\\d+)?\\b)");
 
   private static final Pattern XML = Pattern.compile(
     "(?<comment><!--[\\s\\S]*?-->)"
     + "|(?<tag></?[A-Za-z_][\\w:.-]*)"
-    + "|(?<string>" + Q + "[^\\n&]*?" + Q + ")");
+    + "|(?<string>" + Q + "(?:(?!" + Q + ")[^\\n])*" + Q + ")");
 
   private static final Pattern SQL = Pattern.compile(
     "(?<comment>--[^\\n]*|/\\*[\\s\\S]*?\\*/)"
@@ -148,10 +153,19 @@ final class MdSyntaxHighlighter {
     if (group(matcher, "tag") != null) {
       return hex(TAG);
     }
-    if (keywords != null) {
+    if (group(matcher, "method") != null) {
+      return hex(METHOD);
+    }
+    if (group(matcher, "word") != null && keywords != null) {
       String word = sql ? token.toLowerCase(Locale.ROOT) : token;
       if (keywords.contains(word)) {
         return hex(KEYWORD);
+      }
+      if (!sql && token.length() > 1 && token.equals(token.toUpperCase(Locale.ROOT))) {
+        return hex(CONSTANT);
+      }
+      if (!sql && Character.isUpperCase(token.charAt(0))) {
+        return hex(TYPE);
       }
     }
     return null;
