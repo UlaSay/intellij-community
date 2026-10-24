@@ -38,8 +38,6 @@ DEFAULT_JVM_FLAGS = [
     "-Didea.debug.mode=true",
     "-Djava.system.class.loader=com.intellij.util.lang.PathClassLoader",
     "-Djava.nio.file.spi.DefaultFileSystemProvider=com.intellij.platform.core.nio.fs.MultiRoutingFileSystemProvider",
-    # The dev launcher exe keeps the stock JetBrains icon, so let the platform apply the product SVG icons.
-    "-Dintellij.platform.force.update.app.window.icon=true",
 ]
 
 # The data directories of the IDE. `dev_launch_jvm_flags` owns them, and a flag that states one would lose to its
