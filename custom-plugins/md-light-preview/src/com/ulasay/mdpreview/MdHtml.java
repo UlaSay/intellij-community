@@ -19,6 +19,8 @@ import java.util.regex.Pattern;
  * Shared markdown rendering: parser to HTML, and a Swing HTML pane setup.
  */
 final class MdHtml {
+  private static final com.intellij.openapi.diagnostic.Logger LOG =
+    com.intellij.openapi.diagnostic.Logger.getInstance(MdHtml.class);
   // GitHub markdown palette: a paper-like page and a gray card for code.
   private static final JBColor PAGE_BACKGROUND = new JBColor(0xFFFFFF, 0x0D1117);
   private static final JBColor CODE_BACKGROUND = new JBColor(0xF6F8FA, 0x161B22);
@@ -41,6 +43,7 @@ final class MdHtml {
       return colorCodeBlocks(html);
     }
     catch (Exception e) {
+      LOG.warn("markdown render failed, falling back to plain text", e);
       return "<pre>" + escapeHtml(markdown) + "</pre>";
     }
   }

@@ -133,19 +133,19 @@ final class MdSyntaxHighlighter {
   }
 
   private static String colorOf(Matcher matcher, String token, Set<String> keywords, boolean sql) {
-    if (matcher.group("comment") != null) {
+    if (group(matcher, "comment") != null) {
       return hex(COMMENT);
     }
-    if (matcher.group("string") != null) {
+    if (group(matcher, "string") != null) {
       return hex(STRING);
     }
-    if (matcher.group("number") != null) {
+    if (group(matcher, "number") != null) {
       return hex(NUMBER);
     }
-    if (matcher.group("annotation") != null) {
+    if (group(matcher, "annotation") != null) {
       return hex(ANNOTATION);
     }
-    if (matcher.group("tag") != null) {
+    if (group(matcher, "tag") != null) {
       return hex(TAG);
     }
     if (keywords != null) {
@@ -155,6 +155,16 @@ final class MdSyntaxHighlighter {
       }
     }
     return null;
+  }
+
+  // matcher.group(name) throws for a group the pattern does not define, it does not return null.
+  private static String group(Matcher matcher, String name) {
+    try {
+      return matcher.group(name);
+    }
+    catch (IllegalArgumentException e) {
+      return null;
+    }
   }
 
   private static String hex(JBColor color) {
