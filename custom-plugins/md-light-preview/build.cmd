@@ -24,7 +24,7 @@ if exist "%OUT%" rmdir /s /q "%OUT%"
 mkdir "%OUT%\META-INF" >nul 2>&1
 
 echo Compiling...
-"%DIST%\jbr\bin\javac.exe" --release 17 -encoding UTF-8 -nowarn -cp "%DIST%\lib\*" -d "%OUT%" "%~dp0src\com\ulasay\mdpreview\MdPreviewAction.java" "%~dp0src\com\ulasay\mdpreview\MdPreviewDialog.java"
+"%DIST%\jbr\bin\javac.exe" --release 17 -encoding UTF-8 -nowarn -cp "%DIST%\lib\*" -d "%OUT%" "%~dp0src\com\ulasay\mdpreview\MdHtml.java" "%~dp0src\com\ulasay\mdpreview\MdLightFileEditor.java" "%~dp0src\com\ulasay\mdpreview\MdLightFileEditorProvider.java" "%~dp0src\com\ulasay\mdpreview\MdPreviewAction.java" "%~dp0src\com\ulasay\mdpreview\MdPreviewDialog.java"
 if errorlevel 1 exit /b 1
 
 copy /y "%~dp0src\META-INF\plugin.xml" "%OUT%\META-INF\plugin.xml" >nul
@@ -36,5 +36,9 @@ if errorlevel 1 exit /b 1
 echo Installing to %TARGET% ...
 mkdir "%TARGET%" 2>nul
 copy /y "%OUT%\%PLUGIN_ID%.jar" "%TARGET%\" >nul
+if errorlevel 1 (
+  echo ERROR: copy failed. Close the IDE first - it keeps the old jar memory-mapped.
+  exit /b 1
+)
 
 echo Done. Restart the IDE to load the plugin.
