@@ -63,10 +63,10 @@ final class MdHtml {
     styleSheet.addRule("blockquote {color: " + toHex(JBColor.GRAY) + "; margin: 8 0 8 8;"
                        + " border-left: 3px solid " + toHex(BORDER_COLOR) + "; padding-left: 12;}");
     styleSheet.addRule("a {color: " + toHex(LINK_COLOR) + ";}");
-    styleSheet.addRule("table {border: 1px solid " + toHex(BORDER_COLOR) + "; border-collapse: collapse; margin: 10 0 10 0;}");
-    styleSheet.addRule("th {border: 1px solid " + toHex(BORDER_COLOR) + "; background: " + toHex(CODE_BACKGROUND)
-                       + "; padding: 6 10 6 10; font-weight: bold;}");
-    styleSheet.addRule("td {border: 1px solid " + toHex(BORDER_COLOR) + "; padding: 6 10 6 10;}");
+    styleSheet.addRule("table {margin: 10 0 10 0;}");
+    styleSheet.addRule("th {background: " + toHex(CODE_BACKGROUND) + "; border-bottom: 2px solid "
+                       + toHex(BORDER_COLOR) + "; padding: 6 12 6 6; font-weight: bold;}");
+    styleSheet.addRule("td {border-bottom: 1px solid " + toHex(BORDER_COLOR) + "; padding: 6 12 6 6;}");
     styleSheet.addRule("li {margin-top: 3; margin-bottom: 3;}");
     styleSheet.addRule("ul {margin-top: 4; margin-bottom: 4; margin-left: 20; padding-left: 10;}");
     styleSheet.addRule("ol {margin-top: 4; margin-bottom: 4; margin-left: 24; padding-left: 8;}");
