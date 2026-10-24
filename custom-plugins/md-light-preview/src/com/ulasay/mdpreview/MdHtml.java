@@ -39,37 +39,37 @@ final class MdHtml {
   static void install(JEditorPane pane) {
     pane.setContentType("text/html");
     pane.setEditable(false);
-    pane.setBorder(JBUI.Borders.empty(10, 14));
+    pane.setBorder(JBUI.Borders.empty(14, 18));
     pane.setBackground(UIManager.getColor("Panel.background"));
     var kit = (javax.swing.text.html.HTMLEditorKit)pane.getEditorKit();
     var styleSheet = kit.getStyleSheet();
     Font font = JBFont.label();
     String mono = "JetBrains Mono, Consolas, Monospaced";
     String background = toHex(UIManager.getColor("Panel.background"));
-    styleSheet.addRule("body {font-family: " + font.getFamily() + "; font-size: " + (font.getSize() + 1)
+    styleSheet.addRule("body {font-family: " + font.getFamily() + "; font-size: " + (font.getSize() + 2)
                        + "pt; color: " + toHex(UIManager.getColor("Label.foreground"))
                        + "; background: " + background + ";}");
-    styleSheet.addRule("h1 {font-size: 175%; font-weight: bold; margin-top: 14; margin-bottom: 8;"
+    styleSheet.addRule("h1 {font-size: 175%; font-weight: bold; margin-top: 18; margin-bottom: 10;"
                        + " border-bottom: 1px solid " + toHex(BORDER_COLOR) + "; padding-bottom: 4;}");
-    styleSheet.addRule("h2 {font-size: 150%; font-weight: bold; margin-top: 14; margin-bottom: 6;"
+    styleSheet.addRule("h2 {font-size: 150%; font-weight: bold; margin-top: 18; margin-bottom: 8;"
                        + " border-bottom: 1px solid " + toHex(BORDER_COLOR) + "; padding-bottom: 3;}");
-    styleSheet.addRule("h3 {font-size: 125%; font-weight: bold; margin-top: 12; margin-bottom: 4;}");
-    styleSheet.addRule("h4 {font-size: 110%; font-weight: bold; margin-top: 10; margin-bottom: 4;}");
-    styleSheet.addRule("p {margin-top: 7; margin-bottom: 7;}");
-    styleSheet.addRule("code {font-family: " + mono + "; font-size: 95%; background: "
+    styleSheet.addRule("h3 {font-size: 125%; font-weight: bold; margin-top: 14; margin-bottom: 6;}");
+    styleSheet.addRule("h4 {font-size: 112%; font-weight: bold; margin-top: 12; margin-bottom: 6;}");
+    styleSheet.addRule("p {margin-top: 10; margin-bottom: 10;}");
+    styleSheet.addRule("code {font-family: " + mono + "; background: "
                        + toHex(CODE_BACKGROUND) + "; padding: 1 3 1 3;}");
-    styleSheet.addRule("pre {font-family: " + mono + "; font-size: 95%; background: " + toHex(CODE_BACKGROUND)
-                       + "; border: 1px solid " + toHex(BORDER_COLOR) + "; margin: 10 0 10 0; padding: 10;}");
-    styleSheet.addRule("blockquote {color: " + toHex(JBColor.GRAY) + "; margin: 8 0 8 8;"
-                       + " border-left: 3px solid " + toHex(BORDER_COLOR) + "; padding-left: 12;}");
+    styleSheet.addRule("pre {font-family: " + mono + "; background: " + toHex(CODE_BACKGROUND)
+                       + "; border: 1px solid " + toHex(BORDER_COLOR) + "; margin: 12 0 12 0; padding: 12;}");
+    styleSheet.addRule("blockquote {color: " + toHex(JBColor.GRAY) + "; margin: 10 0 10 10;"
+                       + " border-left: 3px solid " + toHex(BORDER_COLOR) + "; padding-left: 14;}");
     styleSheet.addRule("a {color: " + toHex(LINK_COLOR) + ";}");
-    styleSheet.addRule("table {margin: 10 0 10 0;}");
+    styleSheet.addRule("table {margin: 12 0 12 0;}");
     styleSheet.addRule("th {background: " + toHex(CODE_BACKGROUND) + "; border-bottom: 2px solid "
-                       + toHex(BORDER_COLOR) + "; padding: 6 12 6 6; font-weight: bold;}");
-    styleSheet.addRule("td {border-bottom: 1px solid " + toHex(BORDER_COLOR) + "; padding: 6 12 6 6;}");
-    styleSheet.addRule("li {margin-top: 3; margin-bottom: 3;}");
-    styleSheet.addRule("ul {margin-top: 4; margin-bottom: 4; margin-left: 20; padding-left: 10;}");
-    styleSheet.addRule("ol {margin-top: 4; margin-bottom: 4; margin-left: 24; padding-left: 8;}");
+                       + toHex(BORDER_COLOR) + "; padding: 8 14 8 6; font-weight: bold;}");
+    styleSheet.addRule("td {border-bottom: 1px solid " + toHex(BORDER_COLOR) + "; padding: 8 14 8 6;}");
+    styleSheet.addRule("li {margin-top: 5; margin-bottom: 5;}");
+    styleSheet.addRule("ul {margin-top: 6; margin-bottom: 6; margin-left: 20; padding-left: 10;}");
+    styleSheet.addRule("ol {margin-top: 6; margin-bottom: 6; margin-left: 24; padding-left: 8;}");
   }
 
   static void update(JEditorPane pane, String markdown) {
