@@ -17,9 +17,11 @@ import java.awt.Font;
  * Shared markdown rendering: parser to HTML, and a Swing HTML pane setup.
  */
 final class MdHtml {
-  private static final JBColor CODE_BACKGROUND = new JBColor(0xECF0F4, 0x1E2228);
-  private static final JBColor BORDER_COLOR = new JBColor(0xD0D7DE, 0x444C56);
-  private static final JBColor CODE_ACCENT = new JBColor(0x00838F, 0x4DD0E1);
+  // GitHub markdown palette: a paper-like page and a gray card for code.
+  private static final JBColor PAGE_BACKGROUND = new JBColor(0xFFFFFF, 0x0D1117);
+  private static final JBColor CODE_BACKGROUND = new JBColor(0xF6F8FA, 0x161B22);
+  private static final JBColor INLINE_CODE_BACKGROUND = new JBColor(0xE9EDF1, 0x39414D);
+  private static final JBColor BORDER_COLOR = new JBColor(0xD0D7DE, 0x30363D);
   private static final JBColor LINK_COLOR = new JBColor(0x0969DA, 0x58A6FF);
 
   private MdHtml() {
@@ -41,15 +43,14 @@ final class MdHtml {
     pane.setContentType("text/html");
     pane.setEditable(false);
     pane.setBorder(JBUI.Borders.empty(16, 48));
-    pane.setBackground(UIManager.getColor("Panel.background"));
+    pane.setBackground(PAGE_BACKGROUND);
     var kit = (javax.swing.text.html.HTMLEditorKit)pane.getEditorKit();
     var styleSheet = kit.getStyleSheet();
     Font font = JBFont.label();
     String mono = "JetBrains Mono, Consolas, Monospaced";
-    String background = toHex(UIManager.getColor("Panel.background"));
     styleSheet.addRule("body {font-family: " + font.getFamily() + "; font-size: " + (font.getSize() + 2)
                        + "pt; color: " + toHex(UIManager.getColor("Label.foreground"))
-                       + "; background: " + background + ";}");
+                       + "; background: " + toHex(PAGE_BACKGROUND) + ";}");
     styleSheet.addRule("h1 {font-size: 175%; font-weight: bold; margin-top: 18; margin-bottom: 10;"
                        + " border-bottom: 1px solid " + toHex(BORDER_COLOR) + "; padding-bottom: 4;}");
     styleSheet.addRule("h2 {font-size: 150%; font-weight: bold; margin-top: 18; margin-bottom: 8;"
@@ -58,13 +59,9 @@ final class MdHtml {
     styleSheet.addRule("h4 {font-size: 112%; font-weight: bold; margin-top: 12; margin-bottom: 6;}");
     styleSheet.addRule("p {margin-top: 10; margin-bottom: 10;}");
     styleSheet.addRule("code {font-family: " + mono + "; background: "
-                       + toHex(CODE_BACKGROUND) + "; padding: 1 3 1 3;}");
+                       + toHex(INLINE_CODE_BACKGROUND) + "; padding: 1 3 1 3;}");
     styleSheet.addRule("pre {font-family: " + mono + "; background: " + toHex(CODE_BACKGROUND)
-                       + "; border-left: 3px solid " + toHex(CODE_ACCENT)
-                       + "; border-top: 1px solid " + toHex(BORDER_COLOR)
-                       + "; border-right: 1px solid " + toHex(BORDER_COLOR)
-                       + "; border-bottom: 1px solid " + toHex(BORDER_COLOR)
-                       + "; margin: 12 0 12 0; padding: 12;}");
+                       + "; margin: 12 0 12 0; padding: 16;}");
     styleSheet.addRule("blockquote {color: " + toHex(JBColor.GRAY) + "; margin: 10 0 10 10;"
                        + " border-left: 3px solid " + toHex(BORDER_COLOR) + "; padding-left: 14;}");
     styleSheet.addRule("a {color: " + toHex(LINK_COLOR) + ";}");
