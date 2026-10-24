@@ -39,7 +39,7 @@ final class MdHtml {
   static void install(JEditorPane pane) {
     pane.setContentType("text/html");
     pane.setEditable(false);
-    pane.setBorder(JBUI.Borders.empty(14, 18));
+    pane.setBorder(JBUI.Borders.empty(16, 48));
     pane.setBackground(UIManager.getColor("Panel.background"));
     var kit = (javax.swing.text.html.HTMLEditorKit)pane.getEditorKit();
     var styleSheet = kit.getStyleSheet();
