@@ -5,7 +5,7 @@
       <stop offset="1" stop-color="#1565C0"/>
     </linearGradient>
   </defs>
-  <rect x="3" y="3" width="58" height="58" rx="13" fill="url(#sorldBg)"/>
-  <path d="M 41 20 A 9.5 9.5 0 1 0 32 32 A 9.5 9.5 0 1 1 23 44"
-        fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"/>
+  <rect x="0" y="0" width="64" height="64" rx="12" fill="url(#sorldBg)"/>
+  <path d="M 44.2 15.8 A 12.8 12.8 0 1 0 32 32 A 12.8 12.8 0 1 1 19.8 48.2"
+        fill="none" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round"/>
 </svg>
