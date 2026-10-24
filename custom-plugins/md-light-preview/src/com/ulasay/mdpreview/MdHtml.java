@@ -2,6 +2,7 @@ package com.ulasay.mdpreview;
 
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.JBFont;
+import com.intellij.util.ui.JBUI;
 import org.intellij.markdown.ast.ASTNode;
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor;
 import org.intellij.markdown.html.HtmlGenerator;
@@ -38,24 +39,33 @@ final class MdHtml {
   static void install(JEditorPane pane) {
     pane.setContentType("text/html");
     pane.setEditable(false);
+    pane.setBorder(JBUI.Borders.empty(10, 14));
     var kit = (javax.swing.text.html.HTMLEditorKit)pane.getEditorKit();
     var styleSheet = kit.getStyleSheet();
     Font font = JBFont.label();
-    styleSheet.addRule("body {font-family: " + font.getFamily() + "; font-size: " + font.getSize()
+    String mono = "JetBrains Mono, Consolas, Monospaced";
+    styleSheet.addRule("body {font-family: " + font.getFamily() + "; font-size: " + (font.getSize() + 1)
                        + "pt; color: " + toHex(UIManager.getColor("Label.foreground")) + ";}");
-    styleSheet.addRule("h1 {font-size: 160%; font-weight: bold; margin-top: 8; margin-bottom: 6;}");
-    styleSheet.addRule("h2 {font-size: 140%; font-weight: bold; margin-top: 8; margin-bottom: 6;}");
-    styleSheet.addRule("h3 {font-size: 120%; font-weight: bold; margin-top: 6; margin-bottom: 4;}");
-    styleSheet.addRule("h4 {font-size: 110%; font-weight: bold; margin-top: 6; margin-bottom: 4;}");
-    styleSheet.addRule("p {margin-top: 4; margin-bottom: 4;}");
-    styleSheet.addRule("code {font-family: Monospaced; background: " + toHex(CODE_BACKGROUND) + ";}");
-    styleSheet.addRule("pre {font-family: Monospaced; background: " + toHex(CODE_BACKGROUND) + "; margin: 4; padding: 6;}");
-    styleSheet.addRule("blockquote {color: " + toHex(JBColor.GRAY) + "; margin-left: 12;}");
+    styleSheet.addRule("h1 {font-size: 175%; font-weight: bold; margin-top: 14; margin-bottom: 8;"
+                       + " border-bottom: 1px solid " + toHex(BORDER_COLOR) + "; padding-bottom: 4;}");
+    styleSheet.addRule("h2 {font-size: 150%; font-weight: bold; margin-top: 14; margin-bottom: 6;"
+                       + " border-bottom: 1px solid " + toHex(BORDER_COLOR) + "; padding-bottom: 3;}");
+    styleSheet.addRule("h3 {font-size: 125%; font-weight: bold; margin-top: 12; margin-bottom: 4;}");
+    styleSheet.addRule("h4 {font-size: 110%; font-weight: bold; margin-top: 10; margin-bottom: 4;}");
+    styleSheet.addRule("p {margin-top: 6; margin-bottom: 6;}");
+    styleSheet.addRule("code {font-family: " + mono + "; background: " + toHex(CODE_BACKGROUND) + ";}");
+    styleSheet.addRule("pre {font-family: " + mono + "; background: " + toHex(CODE_BACKGROUND)
+                       + "; border: 1px solid " + toHex(BORDER_COLOR) + "; margin: 8 0 8 0; padding: 8;}");
+    styleSheet.addRule("blockquote {color: " + toHex(JBColor.GRAY) + "; margin-left: 8;"
+                       + " border-left: 3px solid " + toHex(BORDER_COLOR) + "; padding-left: 10;}");
     styleSheet.addRule("a {color: " + toHex(LINK_COLOR) + ";}");
-    styleSheet.addRule("table {border: 1px solid " + toHex(BORDER_COLOR) + "; border-collapse: collapse; margin: 4;}");
-    styleSheet.addRule("th {border: 1px solid " + toHex(BORDER_COLOR) + "; padding: 4; font-weight: bold;}");
-    styleSheet.addRule("td {border: 1px solid " + toHex(BORDER_COLOR) + "; padding: 4;}");
-    styleSheet.addRule("li {margin-top: 2; margin-bottom: 2;}");
+    styleSheet.addRule("table {border: 1px solid " + toHex(BORDER_COLOR) + "; border-collapse: collapse; margin: 8 0 8 0;}");
+    styleSheet.addRule("th {border: 1px solid " + toHex(BORDER_COLOR) + "; background: " + toHex(CODE_BACKGROUND)
+                       + "; padding: 5 8 5 8; font-weight: bold;}");
+    styleSheet.addRule("td {border: 1px solid " + toHex(BORDER_COLOR) + "; padding: 5 8 5 8;}");
+    styleSheet.addRule("li {margin-top: 3; margin-bottom: 3;}");
+    styleSheet.addRule("ul {margin-top: 4; margin-bottom: 4;}");
+    styleSheet.addRule("ol {margin-top: 4; margin-bottom: 4;}");
   }
 
   static void update(JEditorPane pane, String markdown) {
