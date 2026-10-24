@@ -12,6 +12,8 @@ import javax.swing.JEditorPane;
 import javax.swing.UIManager;
 import java.awt.Color;
 import java.awt.Font;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Shared markdown rendering: parser to HTML, and a Swing HTML pane setup.
@@ -27,16 +29,40 @@ final class MdHtml {
   private MdHtml() {
   }
 
+  private static final Pattern FENCED_CODE = Pattern.compile(
+    "<pre><code(?: class=\"language-([\\w+-]+)\")?>(.*?)</code></pre>", Pattern.DOTALL);
+
   static String render(String markdown) {
     try {
       var flavour = new GFMFlavourDescriptor();
       ASTNode tree = new MarkdownParser(flavour).buildMarkdownTreeFromString(markdown);
-      return new HtmlGenerator(markdown, tree, flavour, false)
+      String html = new HtmlGenerator(markdown, tree, flavour, false)
         .generateHtml(new HtmlGenerator.DefaultTagRenderer((node, tag, attributes) -> attributes, false));
+      return colorCodeBlocks(html);
     }
     catch (Exception e) {
       return "<pre>" + escapeHtml(markdown) + "</pre>";
     }
+  }
+
+  private static String colorCodeBlocks(String html) {
+    Matcher matcher = FENCED_CODE.matcher(html);
+    var result = new StringBuilder(html.length() + 512);
+    int copied = 0;
+    while (matcher.find()) {
+      result.append(html, copied, matcher.start());
+      copied = matcher.end();
+      String language = matcher.group(1);
+      String code = matcher.group(2);
+      String colored = MdSyntaxHighlighter.highlight(code, language);
+      result.append("<pre><code");
+      if (language != null) {
+        result.append(" class=\"language-").append(language).append("\"");
+      }
+      result.append(">").append(colored).append("</code></pre>");
+    }
+    result.append(html, copied, html.length());
+    return result.toString();
   }
 
   static void install(JEditorPane pane) {
