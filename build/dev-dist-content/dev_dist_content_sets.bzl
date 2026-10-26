@@ -130,6 +130,7 @@ DEV_DIST_PLUGIN_COMPONENTS = {
             "intellij.compose.ide.plugin": "//plugins/compose:intellij.compose.ide.plugin_dev_plugin",
             "intellij.idea.customization.plugin": "//build/dev-dist-descriptors/intellij.idea.customization.plugin:intellij.idea.customization.plugin_dev_plugin",
             "intellij.javaFX.community": "//build/dev-dist-descriptors/intellij.javaFX.community:intellij.javaFX.community_dev_plugin",
+            "intellij.lombok.plugin": "//plugins/lombok/plugin:intellij.lombok.plugin_dev_plugin",
         },
         "additional": {
             "intellij.devkit": "//build/dev-dist-descriptors/intellij.devkit:intellij.devkit_dev_plugin",
