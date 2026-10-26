@@ -4,6 +4,22 @@
   <vendor>UlaSay</vendor>
   <description>Lightweight markdown preview based on the Swing HTML engine. No JCEF, no browser.</description>
   <depends>com.intellij.modules.platform</depends>
+  <!-- Content-module references: `<depends>` cannot address content modules, only this element can. -->
+  <dependencies>
+    <module name="intellij.libraries.compose.foundation.desktop"/>
+    <module name="intellij.libraries.coil"/>
+    <module name="intellij.libraries.kotlinx.coroutines.core"/>
+    <module name="intellij.platform.jewel.foundation"/>
+    <module name="intellij.platform.jewel.ui"/>
+    <module name="intellij.platform.jewel.ideLafBridge"/>
+    <module name="intellij.platform.jewel.markdown.core"/>
+    <module name="intellij.platform.jewel.markdown.ideLafBridgeStyling"/>
+    <module name="intellij.platform.jewel.markdown.extensions.autolink"/>
+    <module name="intellij.platform.jewel.markdown.extensions.gfmAlerts"/>
+    <module name="intellij.platform.jewel.markdown.extensions.gfmTables"/>
+    <module name="intellij.platform.jewel.markdown.extensions.gfmStrikethrough"/>
+    <module name="intellij.platform.jewel.markdown.extensions.images"/>
+  </dependencies>
   <idea-version since-build="271"/>
   <extensions defaultExtensionNs="com.intellij">
     <fileEditorProvider implementation="com.ulasay.mdpreview.MdLightFileEditorProvider"/>

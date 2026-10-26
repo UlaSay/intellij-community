@@ -1,0 +1,57 @@
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+load("//build:compiler-options.bzl", "create_kotlinc_options")
+
+create_kotlinc_options(
+    name = "md_preview_kotlinc_opts",
+    opt_in = [
+        "androidx.compose.ui.ExperimentalComposeUiApi",
+        "androidx.compose.foundation.ExperimentalFoundationApi",
+        "org.jetbrains.jewel.foundation.ExperimentalJewelApi",
+    ],
+)
+
+# Builds the Markdown Light Preview plugin jar. build.cmd copies the jar
+# into the dev IDE sandbox; this target is not part of the product build.
+jvm_library(
+    name = "md_light_preview",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+        ],
+        allow_empty = False,
+    ),
+    kotlinc_opts = ":md_preview_kotlinc_opts",
+    module_name = "com.ulasay.md-light-preview",
+    resource_strip_prefix = "src",
+    resources = glob(["src/META-INF/**"]),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "//libraries/jetbrains/annotations",
+        "//libraries/markdown",
+        "//libraries/kotlinx/coroutines/core",
+        "//libraries/compose-foundation-desktop",
+        "//libraries/compose-runtime-desktop",
+        "//libraries/coil",
+        "//platform/core-api:core",
+        "//platform/core-ui",
+        "//platform/platform-api:ide",
+        "//platform/analysis-api:analysis",
+        "//platform/editor-ui-api:editor-ui",
+        "//platform/util",
+        "//platform/util:util-ui",
+        "//platform/util/concurrency",
+        "//platform/jewel/foundation",
+        "//platform/jewel/ui",
+        "//platform/jewel/ide-laf-bridge",
+        "//platform/jewel/markdown/core",
+        "//platform/jewel/markdown/ide-laf-bridge-styling",
+        "//platform/jewel/markdown/extensions/autolink",
+        "//platform/jewel/markdown/extensions/gfm-alerts",
+        "//platform/jewel/markdown/extensions/gfm-tables",
+        "//platform/jewel/markdown/extensions/gfm-strikethrough",
+        "//platform/jewel/markdown/extensions/images",
+    ],
+)
