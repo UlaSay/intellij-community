@@ -14,7 +14,7 @@ set "SANDBOX=%REPO%\out\dev-data\idea_community\config\plugins"
 set "DEST=%SANDBOX%\%PLUGIN_ID%\lib"
 set "DISABLED=%REPO%\out\dev-data\idea_community\config\disabled_plugins.txt"
 
-tasklist /FI "IMAGENAME eq idea.exe" | find /I "idea.exe" >nul
+tasklist /FI "IMAGENAME eq idea.exe" | findstr /I "idea.exe" >nul
 if not errorlevel 1 (
   echo ERROR: close the dev IDE first - it locks the plugin jar and the config.
   exit /b 1
