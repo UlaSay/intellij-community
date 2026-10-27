@@ -23,5 +23,7 @@ dependencies. Without it the plugin does not load.
 
 ## Use
 
-Open a `.md` file. The view starts in preview mode. Use the `预览` / `编辑` buttons to switch
-between preview and text. Typing refreshes the preview after a short delay.
+Open a `.md` file. The editor is a split view built on the platform `TextEditorWithPreview`
+skeleton: the text editor on the left, the Jewel preview on the right, with the standard
+three-state switcher (editor only / split / preview only) and a draggable divider. The chosen
+layout persists. Typing refreshes the preview after a short delay.

@@ -17,7 +17,6 @@ jvm_library(
     srcs = glob(
         [
             "src/**/*.kt",
-            "src/**/*.java",
         ],
         allow_empty = False,
     ),
@@ -37,6 +36,7 @@ jvm_library(
         "//platform/core-api:core",
         "//platform/analysis-api:analysis",
         "//platform/editor-ui-api:editor-ui",
+        "//platform/platform-impl:ide-impl",
         "//platform/util",
         "//platform/util:util-ui",
         "//platform/util/concurrency",
