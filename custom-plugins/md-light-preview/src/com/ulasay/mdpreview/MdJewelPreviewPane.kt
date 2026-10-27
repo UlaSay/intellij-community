@@ -162,10 +162,11 @@ private fun MdJewelPreviewContent(project: Project, rootDir: Path?, rawMarkdown:
  * colors work in both light and dark themes.
  */
 private fun createPreviewStyling(): MarkdownStyling {
-  // Body text keeps the IDE UI font family but reads at the editor font size, so the
-  // preview matches what the user tuned in Settings | Editor | Font.
-  val editorFontSize = EditorColorsManager.getInstance().globalScheme.editorFontSize.sp
-  val base = retrieveDefaultTextStyle(fontSize = editorFontSize).copy(color = Color.Unspecified)
+  // Body text keeps the IDE UI font family and tracks the editor font size from
+  // Settings | Editor | Font, one step above it: the preview is a reading surface, and
+  // proportional UI text at the code font size reads small.
+  val editorFontSize = EditorColorsManager.getInstance().globalScheme.editorFontSize
+  val base = retrieveDefaultTextStyle(fontSize = (editorFontSize + 1).sp).copy(color = Color.Unspecified)
   val bodyText = base.copy(lineHeight = base.fontSize * 1.6f)
 
   val editorScheme = retrieveEditorColorScheme()

@@ -21,8 +21,8 @@ import org.jetbrains.jewel.foundation.modifier.thenIf
 
 /**
  * A simple table that sizes columns to take as much room as they need. If the horizontal space available is less than
- * what the cells would take, all columns are sized proportionally to their intrinsic width so that they still can fit
- * the available width.
+ * what the cells would take, every column keeps at least the width of its widest unbreakable content unit, and the
+ * remaining space is shared proportionally to how much each column wanted beyond that minimum.
  *
  * Cells **must** only contain one top-level component. If you need your cells to contain more than one, wrap your cell
  * content in a [`Box`][Box], [`Column`][androidx.compose.foundation.layout.Column],
@@ -65,7 +65,8 @@ public fun BasicTableLayout(
                 "Found ${measurables.size} cells, but expected ${rowCount * columnCount}."
             }
 
-            val intrinsicColumnWidths = IntArray(columnCount)
+            val measuredIntrinsicColumnWidths = IntArray(columnCount)
+            val minimumColumnWidths = IntArray(columnCount)
             val measurablesByRow = measurables.chunked(columnCount)
             for ((rowIndex, rowCells) in rows.withIndex()) {
                 require(rowCells.size == columnCount) {
@@ -79,8 +80,14 @@ public fun BasicTableLayout(
                     // Store the intrinsic width for each column, assuming we have infinite
                     // vertical space available to display each cell (which we do)
                     val intrinsicCellWidth = measurable.maxIntrinsicWidth(height = Int.MAX_VALUE)
-                    intrinsicColumnWidths[columnIndex] =
-                        max(intrinsicColumnWidths[columnIndex].or(0), intrinsicCellWidth)
+                    measuredIntrinsicColumnWidths[columnIndex] =
+                        max(measuredIntrinsicColumnWidths[columnIndex].or(0), intrinsicCellWidth)
+
+                    // The minimum width keeps the widest unbreakable content unit, for example a single CJK
+                    // character or a whole latin word, fully visible when space runs out
+                    val minimumCellWidth = measurable.minIntrinsicWidth(height = Int.MAX_VALUE)
+                    minimumColumnWidths[columnIndex] =
+                        max(minimumColumnWidths[columnIndex].or(0), minimumCellWidth)
                 }
             }
 
@@ -91,29 +98,14 @@ public fun BasicTableLayout(
             // table
             val cellBorderWidthPx = cellBorderWidth.roundToPx()
             val totalHorizontalBordersWidth = cellBorderWidthPx * (columnCount + 1)
-            val minTableIntrinsicWidth = intrinsicColumnWidths.sum() + totalHorizontalBordersWidth
             val availableWidth = incomingConstraints.maxWidth
+            val availableWidthForColumns = availableWidth - totalHorizontalBordersWidth
 
-            // We want to size the columns as a ratio of their intrinsic size to the available width
-            // if there is not enough room to show them all, or as their intrinsic width if they all
-            // fit
-            var tableWidth = 0
-
-            if (minTableIntrinsicWidth <= availableWidth) {
-                // We have enough room for all columns, use intrinsic column sizes
-                tableWidth = minTableIntrinsicWidth
-            } else {
-                // We can't fit all columns in the available width; set their size proportionally
-                // to the intrinsic width, so they all fit within the available horizontal space
-                val scaleRatio = availableWidth.toFloat() / minTableIntrinsicWidth
-                for (i in 0 until columnCount) {
-                    // By truncating the decimal side, we may end up a few pixels short than the
-                    // available width, but at least we're never exceeding it.
-                    intrinsicColumnWidths[i] = (intrinsicColumnWidths[i] * scaleRatio).toInt()
-                    tableWidth += intrinsicColumnWidths[i]
-                }
-                tableWidth += totalHorizontalBordersWidth
-            }
+            // We want to size the columns as their intrinsic width if they all fit, or narrower
+            // when there is not enough room to show them all
+            val intrinsicColumnWidths =
+                distributeColumnWidths(measuredIntrinsicColumnWidths, minimumColumnWidths, availableWidthForColumns)
+            val tableWidth = intrinsicColumnWidths.sum() + totalHorizontalBordersWidth
             columnWidths = intrinsicColumnWidths.toList()
 
             // The height of each row is the maximum intrinsic height of their cells, calculated
@@ -166,6 +158,52 @@ public fun BasicTableLayout(
             }
         },
     )
+}
+
+/**
+ * Computes the final column widths for a table laid out in [availableWidthForColumns] pixels.
+ *
+ * Columns keep their intrinsic widths when they all fit. When they don't, every column first
+ * keeps its minimum width — the width of its widest unbreakable content unit, so no glyph is
+ * clipped — and the space that is left is shared proportionally to how much each column wanted
+ * beyond its minimum. If even the minimum widths don't fit, they are shrunk proportionally as a
+ * last resort, so the table still fits within the available space.
+ *
+ * The returned widths never add up to more than [availableWidthForColumns].
+ */
+internal fun distributeColumnWidths(
+    intrinsicColumnWidths: IntArray,
+    minimumColumnWidths: IntArray,
+    availableWidthForColumns: Int,
+): IntArray {
+    require(intrinsicColumnWidths.size == minimumColumnWidths.size) {
+        "Found ${intrinsicColumnWidths.size} intrinsic widths, but ${minimumColumnWidths.size} minimum widths."
+    }
+
+    val minTableWidth = minimumColumnWidths.sum()
+    if (intrinsicColumnWidths.sum() <= availableWidthForColumns) {
+        // There is enough room for all columns, use the intrinsic column widths as they are
+        return intrinsicColumnWidths.copyOf()
+    }
+
+    if (minTableWidth >= availableWidthForColumns) {
+        // Not even the minimum widths fit; shrink them proportionally as a last resort
+        val scaleRatio = availableWidthForColumns.toFloat() / minTableWidth
+        return IntArray(minimumColumnWidths.size) { i -> (minimumColumnWidths[i] * scaleRatio).toInt() }
+    }
+
+    // Give every column its minimum width, then share the space that is left proportionally
+    // to how much each column wanted beyond its minimum. Shrinking a column below its widest
+    // unbreakable unit would clip its glyphs.
+    val extraWidth = availableWidthForColumns - minTableWidth
+    val totalShrinkableWidth =
+        intrinsicColumnWidths.indices.sumOf { intrinsicColumnWidths[it] - minimumColumnWidths[it] }
+    return IntArray(intrinsicColumnWidths.size) { i ->
+        val shrinkableWidth = intrinsicColumnWidths[i] - minimumColumnWidths[i]
+        // By truncating the decimal side, we may end up a few pixels short of the available
+        // width, but we never exceed it.
+        minimumColumnWidths[i] + (shrinkableWidth * extraWidth.toFloat() / totalShrinkableWidth).toInt()
+    }
 }
 
 private fun Modifier.drawTableBorders(
