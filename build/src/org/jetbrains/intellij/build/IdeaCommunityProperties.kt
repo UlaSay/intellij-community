@@ -59,11 +59,13 @@ open class IdeaCommunityProperties(private val communityHomeDir: Path) : JetBrai
       "intellij.idea.community.customization",
     )
 
-    productLayout.bundledPluginModules = IDEA_BUNDLED_PLUGINS + sequenceOf(
-      "intellij.idea.customization.plugin",
-      "intellij.javaFX.community",
-      "intellij.lombok.plugin",
-    )
+    productLayout.bundledPluginModules = IDEA_BUNDLED_PLUGINS
+      .removing("intellij.jcef.plugin")
+      .removing("intellij.mermaid") + sequenceOf(
+        "intellij.idea.customization.plugin",
+        "intellij.javaFX.community",
+        "intellij.lombok.plugin",
+      )
 
     productLayout.prepareCustomPluginRepositoryForPublishedPlugins = false
     productLayout.buildAllCompatiblePlugins = true

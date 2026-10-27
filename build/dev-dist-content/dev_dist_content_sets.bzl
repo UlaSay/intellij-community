@@ -17,14 +17,6 @@ DEV_DIST_PLUGIN_COMPONENTS = {
         "bundled": {
             "intellij.dev": "//build/dev-dist-descriptors/intellij.dev:intellij.dev_dev_plugin",
             "intellij.java.aetherDependencyResolver.plugin": "//build/dev-dist-descriptors/intellij.java.aetherDependencyResolver.plugin:intellij.java.aetherDependencyResolver.plugin_dev_plugin",
-            "intellij.jcef.plugin": {
-                "darwin_aarch64": "//plugins/jcef/plugin:intellij.jcef.plugin_darwin_aarch64_component",
-                "darwin_x64": "//plugins/jcef/plugin:intellij.jcef.plugin_darwin_x64_component",
-                "linux_aarch64": "//plugins/jcef/plugin:intellij.jcef.plugin_linux_aarch64_component",
-                "linux_x64": "//plugins/jcef/plugin:intellij.jcef.plugin_linux_x64_component",
-                "windows_aarch64": "//plugins/jcef/plugin:intellij.jcef.plugin_windows_aarch64_component",
-                "windows_x64": "//plugins/jcef/plugin:intellij.jcef.plugin_windows_x64_component",
-            },
             "intellij.grid.plugin": "//build/dev-dist-descriptors/intellij.grid.plugin:intellij.grid.plugin_dev_plugin",
             "intellij.jna.plugin": {
                 "darwin_aarch64": "//plugins/jna/plugin:intellij.jna.plugin_darwin_aarch64_component",
@@ -109,7 +101,6 @@ DEV_DIST_PLUGIN_COMPONENTS = {
             "intellij.eclipse": "//plugins/eclipse:intellij.eclipse_dev_plugin",
             "intellij.sh.plugin": "//build/dev-dist-descriptors/intellij.sh.plugin:intellij.sh.plugin_dev_plugin",
             "intellij.markdown": "//build/dev-dist-descriptors/intellij.markdown:intellij.markdown_dev_plugin",
-            "intellij.mermaid": "//plugins/mermaid:intellij.mermaid_dev_plugin",
             "intellij.mcpserver.plugin": "//plugins/mcp-server/mcpserver.plugin:intellij.mcpserver.plugin_dev_plugin",
             "intellij.webp": {
                 "darwin_aarch64": "//plugins/webp:intellij.webp_darwin_aarch64_component",
