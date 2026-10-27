@@ -61,9 +61,25 @@ open class IdeaCommunityProperties(private val communityHomeDir: Path) : JetBrai
 
     productLayout.bundledPluginModules = IDEA_BUNDLED_PLUGINS
       .removing("intellij.jcef.plugin")
-      .removing("intellij.mermaid") + sequenceOf(
+      .removing("intellij.mermaid")
+      .removing("intellij.vcs.gitlab")
+      .removing("intellij.performanceTesting")
+      .removing("intellij.eclipse")
+      .removing("intellij.keymap.eclipse")
+      .removing("intellij.keymap.visualStudio")
+      .removing("intellij.keymap.netbeans")
+      .removing("intellij.gradle.plugin")
+      .removing("intellij.gradle.java.plugin")
+      .removing("intellij.groovy")
+      .removing("intellij.groovy.scripting")
+      .removing("intellij.groovy.live.templates")
+      .removing("intellij.mcpserver.plugin")
+      .removing("intellij.junit")
+      .removing("intellij.testng")
+      .removing("intellij.java.coverage")
+      .removing("intellij.android.gradle.declarative.lang.ide")
+      .removing("intellij.android.gradle.dsl") + sequenceOf(
         "intellij.idea.customization.plugin",
-        "intellij.javaFX.community",
         "intellij.lombok.plugin",
       )
 
