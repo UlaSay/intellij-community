@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.LocalPlatformContext
@@ -55,6 +56,7 @@ import org.jetbrains.jewel.markdown.processing.MarkdownProcessor
 import org.jetbrains.jewel.markdown.rendering.DefaultMarkdownBlockRenderer
 import org.jetbrains.jewel.markdown.rendering.ImageSourceResolver
 import org.jetbrains.jewel.markdown.rendering.InlineMarkdownRenderer
+import org.jetbrains.jewel.markdown.rendering.InlinesStyling
 import org.jetbrains.jewel.markdown.rendering.MarkdownStyling
 import org.jetbrains.jewel.markdown.rendering.create
 import org.jetbrains.jewel.ui.component.VerticallyScrollableContainer
@@ -90,6 +92,9 @@ class MdJewelPreviewPane(project: Project, rootDir: Path?) : JPanel(BorderLayout
 
 /** The widest the rendered text column grows to; wider panes add side padding instead. */
 private val READING_COLUMN_WIDTH = 1200.dp
+
+/** The body font size, in points above the editor font size: the preview is a reading surface. */
+private const val PREVIEW_BODY_FONT_DELTA = 3
 
 @Composable
 private fun MdJewelPreviewContent(project: Project, rootDir: Path?, rawMarkdown: State<String>) {
@@ -158,15 +163,16 @@ private fun MdJewelPreviewContent(project: Project, rootDir: Path?, rawMarkdown:
 
 /**
  * Builds the preview styling on top of the IDE LaF bridge defaults: a roomier body line height,
- * code blocks as bordered rounded regions with their language label, and a block quote whose
- * colors work in both light and dark themes.
+ * IDE-scaled heading sizes, code blocks as bordered rounded regions with their language label,
+ * and a block quote whose colors work in both light and dark themes.
  */
 private fun createPreviewStyling(): MarkdownStyling {
   // Body text keeps the IDE UI font family and tracks the editor font size from
-  // Settings | Editor | Font, one step above it: the preview is a reading surface, and
+  // Settings | Editor | Font, a few points above it: the preview is a reading surface, and
   // proportional UI text at the code font size reads small.
   val editorFontSize = EditorColorsManager.getInstance().globalScheme.editorFontSize
-  val base = retrieveDefaultTextStyle(fontSize = (editorFontSize + 1).sp).copy(color = Color.Unspecified)
+  val base = retrieveDefaultTextStyle(fontSize = (editorFontSize + PREVIEW_BODY_FONT_DELTA).sp)
+    .copy(color = Color.Unspecified)
   val bodyText = base.copy(lineHeight = base.fontSize * 1.6f)
 
   val editorScheme = retrieveEditorColorScheme()
@@ -201,6 +207,7 @@ private fun createPreviewStyling(): MarkdownStyling {
 
   return MarkdownStyling.create(
     baseTextStyle = bodyText,
+    heading = createHeadingStyling(bodyText),
     blockQuote = MarkdownStyling.BlockQuote.create(
       padding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
       lineWidth = 4.dp,
@@ -211,6 +218,33 @@ private fun createPreviewStyling(): MarkdownStyling {
       editorTextStyle = codeTextStyle,
       indented = indentedCode,
       fenced = fencedCode,
+    ),
+  )
+}
+
+/**
+ * Heading sizes tuned for the IDE panel: the bridge default doubles the body size for H1,
+ * which reads web-like next to editor-scale text. These multipliers keep the heading ladder
+ * close to the body; SemiBold weight carries the hierarchy.
+ */
+private fun createHeadingStyling(base: TextStyle): MarkdownStyling.Heading {
+  fun headingInlines(scale: Float, color: Color = base.color): InlinesStyling = InlinesStyling.create(
+    base.copy(
+      fontSize = base.fontSize * scale,
+      lineHeight = base.fontSize * scale * 1.3f,
+      fontWeight = FontWeight.SemiBold,
+      color = color,
+    )
+  )
+
+  return MarkdownStyling.Heading(
+    h1 = MarkdownStyling.Heading.H1.create(inlinesStyling = headingInlines(1.7f)),
+    h2 = MarkdownStyling.Heading.H2.create(inlinesStyling = headingInlines(1.45f)),
+    h3 = MarkdownStyling.Heading.H3.create(inlinesStyling = headingInlines(1.25f)),
+    h4 = MarkdownStyling.Heading.H4.create(inlinesStyling = headingInlines(1.0f)),
+    h5 = MarkdownStyling.Heading.H5.create(inlinesStyling = headingInlines(1.0f)),
+    h6 = MarkdownStyling.Heading.H6.create(
+      inlinesStyling = headingInlines(0.95f, retrieveColorOrUnspecified("Component.infoForeground"))
     ),
   )
 }
