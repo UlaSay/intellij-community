@@ -78,7 +78,28 @@ open class IdeaCommunityProperties(private val communityHomeDir: Path) : JetBrai
       .removing("intellij.testng")
       .removing("intellij.java.coverage")
       .removing("intellij.android.gradle.declarative.lang.ide")
-      .removing("intellij.android.gradle.dsl") + sequenceOf(
+      .removing("intellij.android.gradle.dsl")
+      .removing("intellij.dev")
+      .removing("intellij.grid.plugin")
+      .removing("intellij.platform.structuralSearch.plugin")
+      .removing("intellij.platform.tasks.plugin")
+      .removing("intellij.platform.todo.plugin")
+      .removing("intellij.copyright")
+      .removing("intellij.textmate.plugin")
+      .removing("intellij.editorconfig.plugin")
+      .removing("intellij.configurationScript")
+      .removing("intellij.html.tools")
+      .removing("intellij.vcs.github")
+      .removing("intellij.java.i18n")
+      .removing("intellij.java.byteCodeViewer")
+      .removing("intellij.java.decompiler")
+      .removing("intellij.sh.plugin")
+      .removing("intellij.webp")
+      .removing("intellij.grazie")
+      .removing("intellij.featuresTrainer")
+      .removing("intellij.toml")
+      .removing("intellij.kotlin.plugin")
+      .removing("intellij.compose.ide.plugin") + sequenceOf(
         "intellij.idea.customization.plugin",
         "intellij.lombok.plugin",
         "com.ulasay.md-light-preview",
