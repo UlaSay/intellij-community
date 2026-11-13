@@ -1,5 +1,6 @@
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 load("//build:compiler-options.bzl", "create_kotlinc_options")
+load("//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
 
 create_kotlinc_options(
     name = "md_preview_kotlinc_opts",
@@ -10,8 +11,8 @@ create_kotlinc_options(
     ],
 )
 
-# Builds the Markdown Light Preview plugin jar. build.cmd copies the jar
-# into the dev IDE sandbox; this target is not part of the product build.
+# Builds the Markdown Light Preview plugin jar. The dev_dist_plugin call below
+# packs the jar into the dev distribution at plugins/md-light-preview.
 jvm_library(
     name = "md_light_preview",
     srcs = glob(
@@ -51,4 +52,14 @@ jvm_library(
         "//platform/jewel/markdown/extensions/gfm-strikethrough",
         "//platform/jewel/markdown/extensions/images",
     ],
+)
+
+# The plugin is not in the JPS model, so no generated bridge binds the module
+# map. The map is stated here instead, against this package's own jar target.
+dev_dist_plugin(
+    descriptor = "src/META-INF/plugin.xml",
+    directory_name = "md-light-preview",
+    jars = {"lib/md-light-preview.jar": ["com.ulasay.md-light-preview"]},
+    main_module = "com.ulasay.md-light-preview",
+    module_targets = {"com.ulasay.md-light-preview": ["//custom-plugins/md-light-preview:md_light_preview.jar"]},
 )

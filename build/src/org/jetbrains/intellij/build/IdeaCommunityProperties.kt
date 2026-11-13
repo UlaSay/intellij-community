@@ -81,6 +81,7 @@ open class IdeaCommunityProperties(private val communityHomeDir: Path) : JetBrai
       .removing("intellij.android.gradle.dsl") + sequenceOf(
         "intellij.idea.customization.plugin",
         "intellij.lombok.plugin",
+        "com.ulasay.md-light-preview",
       )
 
     productLayout.prepareCustomPluginRepositoryForPublishedPlugins = false
