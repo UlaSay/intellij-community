@@ -4,6 +4,7 @@
   <vendor>UlaSay</vendor>
   <description>Markdown preview rendered with the platform Jewel Compose engine. No JCEF, no browser.</description>
   <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.vcs</depends>
   <!-- Content-module references: `<depends>` cannot address content modules, only this element can. -->
   <dependencies>
     <module name="intellij.libraries.compose.foundation.desktop"/>

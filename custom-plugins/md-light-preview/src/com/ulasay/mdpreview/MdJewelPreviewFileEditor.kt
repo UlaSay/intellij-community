@@ -23,7 +23,7 @@ import javax.swing.Timer
  */
 internal class MdJewelPreviewFileEditor(project: Project, private val file: VirtualFile) : UserDataHolderBase(), FileEditor {
   private val document: Document = requireNotNull(FileDocumentManager.getInstance().getDocument(file))
-  private val previewPane = MdJewelPreviewPane(project, rootDir())
+  private val previewPane = MdJewelPreviewPane(project, file, document, rootDir())
   private val debounce = Timer(250) { previewPane.update(document.text) }
 
   private val documentListener = object : DocumentListener {
@@ -50,7 +50,8 @@ internal class MdJewelPreviewFileEditor(project: Project, private val file: Virt
 
   override fun getComponent(): JComponent = previewPane
 
-  override fun getPreferredFocusedComponent(): JComponent = previewPane
+  /** Null keeps the focus with the text half of the split, so editor shortcuts keep working. */
+  override fun getPreferredFocusedComponent(): JComponent? = null
 
   override fun getName(): @Nls String = "Markdown Preview"
 
@@ -70,5 +71,6 @@ internal class MdJewelPreviewFileEditor(project: Project, private val file: Virt
   override fun dispose() {
     debounce.stop()
     document.removeDocumentListener(documentListener)
+    previewPane.dispose()
   }
 }
