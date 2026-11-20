@@ -23,5 +23,6 @@
   <idea-version since-build="271"/>
   <extensions defaultExtensionNs="com.intellij">
     <fileEditorProvider implementation="com.ulasay.mdpreview.MdLightFileEditorProvider"/>
+    <statusBarWidgetFactory id="ulasay.md.words" implementation="com.ulasay.mdpreview.MdWordsWidgetFactory" order="after Position"/>
   </extensions>
 </idea-plugin>

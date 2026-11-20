@@ -24,7 +24,7 @@ jvm_library(
     kotlinc_opts = ":md_preview_kotlinc_opts",
     module_name = "com.ulasay.md-light-preview",
     resource_strip_prefix = "src",
-    resources = glob(["src/META-INF/**"]),
+    resources = glob(["src/messages/**"]),
     visibility = ["//visibility:public"],
     deps = [
         # do not sort,
@@ -36,6 +36,8 @@ jvm_library(
         "//libraries/coil",
         "//platform/core-api:core",
         "//platform/analysis-api:analysis",
+        "//platform/ide-core",
+        "//platform/core-ui",
         "//platform/editor-ui-api:editor-ui",
         "//platform/platform-impl:ide-impl",
         "//platform/util",
