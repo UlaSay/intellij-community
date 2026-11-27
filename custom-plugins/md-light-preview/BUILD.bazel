@@ -1,3 +1,4 @@
+load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 load("//build:compiler-options.bzl", "create_kotlinc_options")
 load("//platform/build-scripts/bazel-rules:dev_dist_plugin.bzl", "dev_dist_plugin")
@@ -67,4 +68,63 @@ dev_dist_plugin(
     jars = {"lib/md-light-preview.jar": ["com.ulasay.md-light-preview"]},
     main_module = "com.ulasay.md-light-preview",
     module_targets = {"com.ulasay.md-light-preview": ["//custom-plugins/md-light-preview:md_light_preview.jar"]},
+)
+
+# Unit tests of the plugin. `associates` gives the tests access to its internal declarations.
+# The plugin is not in the JPS model, so run the test target by its label and not by `bt --module`.
+jvm_library(
+    name = "md_light_preview_test_lib",
+    testonly = True,
+    srcs = glob(
+        [
+            "test/**/*.kt",
+        ],
+        allow_empty = False,
+    ),
+    associates = [":md_light_preview"],
+    kotlinc_opts = ":md_preview_kotlinc_opts",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        ":md_light_preview",
+        "//libraries/junit6:junit6_test_lib",
+    ],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "//libraries/jetbrains/annotations",
+        "//libraries/junit6",
+        "//libraries/kotlinx/coroutines/core",
+        "//libraries/compose-foundation-desktop",
+        "//libraries/compose-runtime-desktop",
+        "//libraries/coil",
+        "//platform/core-api:core",
+        "//platform/analysis-api:analysis",
+        "//platform/ide-core",
+        "//platform/core-ui",
+        "//platform/editor-ui-api:editor-ui",
+        "//platform/diff-impl",
+        "//platform/platform-impl:ide-impl",
+        "//platform/util",
+        "//platform/util:util-ui",
+        "//platform/util/concurrency",
+        "//platform/vcs-api:vcs",
+        "//platform/vcs-impl",
+        "//platform/jewel/foundation",
+        "//platform/jewel/ui",
+        "//platform/jewel/ide-laf-bridge",
+        "//platform/jewel/markdown/core",
+        "//platform/jewel/markdown/ide-laf-bridge-styling",
+        "//platform/jewel/markdown/extensions/autolink",
+        "//platform/jewel/markdown/extensions/gfm-alerts",
+        "//platform/jewel/markdown/extensions/gfm-tables",
+        "//platform/jewel/markdown/extensions/gfm-strikethrough",
+        "//platform/jewel/markdown/extensions/images",
+        "//libraries/junit6:junit6_test_lib",
+    ],
+)
+
+jps_test(
+    name = "md_light_preview_test",
+    timeout = "moderate",
+    runtime_deps = [":md_light_preview_test_lib"],
 )

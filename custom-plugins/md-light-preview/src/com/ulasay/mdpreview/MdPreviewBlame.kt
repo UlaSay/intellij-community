@@ -99,21 +99,32 @@ internal data class MdBlockBlame(val author: String?, val time: Long, val rank: 
 internal data class MdBlameRegion(val blame: MdBlockBlame, val startsChunk: Boolean)
 
 /**
- * The blame of every top-level block, in one pass.
- *
- * Text lands only on chunk starts, so consecutive blocks of one commit read as a single colored
- * region, the way the editor annotate gutter paints one band per commit chunk.
+ * The blame of every top-level block, in one pass. Returns an empty map while no blame is loaded.
  */
 internal fun buildBlameRegions(
   blocks: List<MarkdownBlock>,
   data: MdBlameData?,
 ): Map<MarkdownBlock, MdBlameRegion?> {
   if (data == null) return emptyMap()
+  return buildBlameRegions(blocks, data::infoForBlock)
+}
+
+/**
+ * The blame of every top-level block, in one pass. [infoForBlock] gives the newest change of a
+ * source line range, or null when the range has no blame.
+ *
+ * Text lands only on chunk starts, so consecutive blocks of one commit read as a single colored
+ * region, the way the editor annotate gutter paints one band per commit chunk.
+ */
+internal fun buildBlameRegions(
+  blocks: List<MarkdownBlock>,
+  infoForBlock: (IntRange) -> MdBlockBlame?,
+): Map<MarkdownBlock, MdBlameRegion?> {
   var previousRank = Int.MIN_VALUE
   return buildMap {
     for (block in blocks) {
       val lines = (block as? ScrollingSynchronizer.LocatableMarkdownBlock)?.lines
-      val info = lines?.let(data::infoForBlock)
+      val info = lines?.let(infoForBlock)
       if (info == null) {
         put(block, null)
         continue
@@ -321,18 +332,27 @@ internal class MdBlameController(
 
 /**
  * The uncommitted changes of a block, or empty when the block matches the repository version.
+ * Returns empty while the document has no line-status tracker.
+ */
+internal fun rangesForBlock(lines: IntRange, state: MdLineStatusState): List<Range> {
+  val tracker = state.tracker ?: return emptyList()
+  return rangesForBlock(lines) { tracker.getRangeForLine(it) }
+}
+
+/**
+ * The uncommitted changes of the source [lines] of a block, or empty when every line is unchanged.
+ * [rangeForLine] gives the change range of a line, or null when the line is unchanged.
  *
  * The order mirrors the editor gutter stack: added lines first, then modified, then
  * whitespace-changed, and the small deleted-boundary markers last.
  */
-internal fun rangesForBlock(lines: IntRange, state: MdLineStatusState): List<Range> {
-  val tracker = state.tracker ?: return emptyList()
+internal fun rangesForBlock(lines: IntRange, rangeForLine: (Int) -> Range?): List<Range> {
   var inserted: Range? = null
   var modified: Range? = null
   var whitespace: Range? = null
   val deleted = ArrayList<Range>()
   for (line in lines) {
-    val range = tracker.getRangeForLine(line) ?: continue
+    val range = rangeForLine(line) ?: continue
     when (range.type) {
       Range.INSERTED -> if (inserted == null) inserted = range
       Range.MODIFIED -> if (modified == null) modified = range
