@@ -211,8 +211,8 @@ internal fun MdFindBar(find: MdFindState, modifier: Modifier = Modifier) {
   val count =
     when {
       !hasQuery -> ""
-      find.matches.isEmpty() -> "0 项"
-      else -> "${find.current + 1} / ${find.matches.size}"
+      find.matches.isEmpty() -> MdPreviewBundle.message("find.no_matches")
+      else -> MdPreviewBundle.message("find.counter", find.current + 1, find.matches.size)
     }
   val countColor = if (hasQuery && find.matches.isEmpty()) errorColor else infoForeground
 
@@ -228,7 +228,7 @@ internal fun MdFindBar(find: MdFindState, modifier: Modifier = Modifier) {
     SearchTextField(
       state = fieldState,
       modifier = Modifier.width(190.dp).focusRequester(focusRequester),
-      placeholder = { Text("查找") },
+      placeholder = { Text(MdPreviewBundle.message("find.placeholder")) },
       fallbackKeyEventHandler = { event -> handleFindKey(event, find) },
     )
     Text(
@@ -237,13 +237,13 @@ internal fun MdFindBar(find: MdFindState, modifier: Modifier = Modifier) {
       style = JewelTheme.defaultTextStyle.copy(fontSize = 11.sp, color = countColor),
     )
     IconButton(onClick = { find.previous() }) {
-      Icon(AllIconsKeys.General.ArrowUp, "上一处")
+      Icon(AllIconsKeys.General.ArrowUp, MdPreviewBundle.message("find.previous"))
     }
     IconButton(onClick = { find.next() }) {
-      Icon(AllIconsKeys.General.ArrowDown, "下一处")
+      Icon(AllIconsKeys.General.ArrowDown, MdPreviewBundle.message("find.next"))
     }
     IconButton(onClick = { find.close() }) {
-      Icon(AllIconsKeys.General.Close, "关闭")
+      Icon(AllIconsKeys.General.Close, MdPreviewBundle.message("find.close"))
     }
   }
 }

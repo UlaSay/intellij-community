@@ -385,9 +385,11 @@ private fun MdJewelPreviewContent(
       ) {
         if (find.active) MdFindBar(find)
         if (blame.available) {
-          MdGutterPill(if (blame.loading) "追溯…" else "追溯", blame.active) { on -> blameController.toggle(on) }
+          val label =
+            if (blame.loading) MdPreviewBundle.message("pill.blame.loading") else MdPreviewBundle.message("pill.blame")
+          MdGutterPill(label, blame.active) { on -> blameController.toggle(on) }
         }
-        MdGutterPill("行号", showLineNumbers.value) { enabled ->
+        MdGutterPill(MdPreviewBundle.message("pill.line_numbers"), showLineNumbers.value) { enabled ->
           showLineNumbers.value = enabled
           PropertiesComponent.getInstance().setValue(LINE_NUMBERS_PROPERTY, enabled)
         }

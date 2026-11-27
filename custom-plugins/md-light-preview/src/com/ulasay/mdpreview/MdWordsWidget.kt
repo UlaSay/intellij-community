@@ -15,7 +15,7 @@ import org.jetbrains.annotations.PropertyKey
 private const val BUNDLE = "messages.MdPreviewBundle"
 
 /** Strings of the plugin. */
-private class MdPreviewBundle : DynamicBundle(BUNDLE) {
+internal class MdPreviewBundle : DynamicBundle(BUNDLE) {
   companion object {
     private val INSTANCE: MdPreviewBundle = MdPreviewBundle()
 

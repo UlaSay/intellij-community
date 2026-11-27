@@ -223,7 +223,7 @@ private fun MdBlockGutter(
         if (info != null && region.startsChunk) {
           val infoForeground = retrieveColorOrUnspecified("Component.infoForeground")
           Text(
-            info.author?.let { author -> if (author.length > 12) author.take(12) + "…" else author } ?: "未提交",
+            blameAuthor(info.author),
             maxLines = 1,
             style = JewelTheme.defaultTextStyle.copy(fontSize = 11.sp, color = infoForeground),
           )
@@ -255,6 +255,14 @@ private fun MdBlockGutter(
     }
   }
 }
+
+/** The gutter text of a block author. A long name is cut, and a local change has no author. */
+private fun blameAuthor(author: String?): String =
+  when {
+    author == null -> MdPreviewBundle.message("blame.uncommitted")
+    author.length > 12 -> MdPreviewBundle.message("blame.author.truncated", author.take(12))
+    else -> author
+  }
 
 @Composable
 private fun lineNumbersColor(): Color {

@@ -352,12 +352,12 @@ internal fun rangesForBlock(lines: IntRange, state: MdLineStatusState): List<Ran
 internal fun relativeTime(time: Long): String {
   val minutes = (System.currentTimeMillis() - time) / 60_000
   return when {
-    minutes < 1 -> "刚刚"
-    minutes < 60 -> "$minutes 分钟前"
-    minutes < 24 * 60 -> "${minutes / 60} 小时前"
-    minutes < 30 * 24 * 60 -> "${minutes / (24 * 60)} 天前"
-    minutes < 365 * 24 * 60 -> "${minutes / (30 * 24 * 60)} 个月前"
-    else -> "${minutes / (365 * 24 * 60)} 年前"
+    minutes < 1 -> MdPreviewBundle.message("blame.time.now")
+    minutes < 60 -> MdPreviewBundle.message("blame.time.minutes", minutes)
+    minutes < 24 * 60 -> MdPreviewBundle.message("blame.time.hours", minutes / 60)
+    minutes < 30 * 24 * 60 -> MdPreviewBundle.message("blame.time.days", minutes / (24 * 60))
+    minutes < 365 * 24 * 60 -> MdPreviewBundle.message("blame.time.months", minutes / (30 * 24 * 60))
+    else -> MdPreviewBundle.message("blame.time.years", minutes / (365 * 24 * 60))
   }
 }
 

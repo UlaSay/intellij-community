@@ -54,7 +54,7 @@ internal class MdJewelPreviewFileEditor(project: Project, private val file: Virt
   /** Null keeps the focus with the text half of the split, so editor shortcuts keep working. */
   override fun getPreferredFocusedComponent(): JComponent? = null
 
-  override fun getName(): @Nls String = "Markdown Preview"
+  override fun getName(): @Nls String = MdPreviewBundle.message("editor.name")
 
   override fun setState(state: FileEditorState) {
   }
