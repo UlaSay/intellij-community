@@ -8,6 +8,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.diagnostic.rethrowControlFlowException
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageUtil
 import com.intellij.lexer.EmptyLexer
@@ -157,11 +158,15 @@ class MdCodeHighlighter(private val project: Project) : CodeHighlighter {
 
     // PSI creation and markup reads need read access; wrap them instead of touching
     // the model bare from a background coroutine.
-    val psiFile = runCatching {
+    val psiFile = try {
       ReadAction.compute<PsiFile?, RuntimeException> {
         PsiFileFactory.getInstance(project).createFileFromText("md_fence.${fileType.defaultExtension}", fileType, code)
       }
-    }.getOrNull() ?: return null
+    }
+    catch (e: Throwable) {
+      rethrowControlFlowException(e)
+      null
+    } ?: return null
 
     var editor: com.intellij.openapi.editor.Editor? = null
     try {
@@ -199,7 +204,8 @@ class MdCodeHighlighter(private val project: Project) : CodeHighlighter {
         }
       }
     }
-    catch (t: Throwable) {
+    catch (e: Throwable) {
+      rethrowControlFlowException(e)
       return null
     }
     finally {
