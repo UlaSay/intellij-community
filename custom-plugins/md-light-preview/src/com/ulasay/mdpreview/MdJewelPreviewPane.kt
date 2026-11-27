@@ -103,12 +103,13 @@ import org.jetbrains.jewel.ui.component.scrollbarContentSafePadding
 /**
  * A Swing pane that renders markdown with the Jewel Compose renderer.
  *
- * It exists only when the Compose UI plugin modules are on the classpath. The editor probes
- * [org.jetbrains.jewel.bridge.JewelComposePanel] before it creates this pane, and falls back
- * to the Swing HTML engine otherwise.
- *
  * The pane takes keyboard focus on click, and Ctrl+F with the focus inside it opens the find bar
  * of the preview instead of the platform Find action.
+ *
+ * [dispose] closes the change popup, releases the line-status tracker of the document, and
+ * disposes the loaded blame. The subscriptions of the blame controller use the pane as their
+ * parent disposable, so the owner releases the pane with `Disposer.dispose` and not with a
+ * direct call.
  */
 class MdJewelPreviewPane(
   private val project: Project,
