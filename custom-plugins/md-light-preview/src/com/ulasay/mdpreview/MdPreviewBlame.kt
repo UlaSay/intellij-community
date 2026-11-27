@@ -218,6 +218,7 @@ internal class MdBlameData(
 
 /**
  * Loads blame for the open file and keeps the line-status tracker of its document fresh.
+ * The owner calls [dispose] when the preview closes.
  *
  * Annotation runs on a pooled thread, because the git backend spends it in a git blame process.
  * The result lands on the EDT. A save of the file triggers a reload while the blame gutter is on.
@@ -232,6 +233,9 @@ internal class MdBlameController(
 ) {
   private var annotationProvider: AnnotationProvider? = null
 
+  /** Whether the controller requested the line-status tracker of the document. */
+  private var trackerRequested = false
+
   init {
     val vcs = ProjectLevelVcsManager.getInstance(project).getVcsFor(file)
     annotationProvider = vcs?.annotationProvider
@@ -239,7 +243,10 @@ internal class MdBlameController(
 
     val trackerManager = LineStatusTrackerManager.getInstanceImpl(project)
     var tracker = trackerManager.getLineStatusTracker(document)
-    if (tracker == null) trackerManager.requestTrackerFor(document, this)
+    if (tracker == null) {
+      trackerManager.requestTrackerFor(document, this)
+      trackerRequested = true
+    }
     attachTracker(tracker)
 
     with(project.messageBus.connect(parent)) {
@@ -258,6 +265,17 @@ internal class MdBlameController(
         }
       })
     }
+  }
+
+  /**
+   * Releases the line-status tracker of the document, when the controller requested it. The
+   * platform keeps a requested tracker until its requester releases it.
+   */
+  fun dispose() {
+    if (trackerRequested && !project.isDisposed) {
+      LineStatusTrackerManager.getInstanceImpl(project).releaseTrackerFor(document, this)
+    }
+    trackerRequested = false
   }
 
   fun toggle(on: Boolean) {

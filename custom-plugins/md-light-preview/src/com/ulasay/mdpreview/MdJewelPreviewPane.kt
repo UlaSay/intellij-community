@@ -249,6 +249,7 @@ class MdJewelPreviewPane(
 
   override fun dispose() {
     closeStatusPopup()
+    blameController.dispose()
     blame.data?.annotation?.dispose()
   }
 
